@@ -21,7 +21,7 @@ public class VisionConstants {
   // Vision backend. true = Strix (Owl on the coprocessor publishes /Vision/observations, read
   // through VisionIOTusk); false = PhotonVision. Applies to REAL and SIM. In SIM, Tusk only sees
   // data if something publishes to NT (a real Owl pointed at the sim, or a fake Owl script).
-  public static boolean useTusk = true;
+  public static boolean useTusk = false;
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "frontcam"; // location

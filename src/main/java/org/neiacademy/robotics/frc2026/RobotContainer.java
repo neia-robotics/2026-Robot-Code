@@ -61,9 +61,11 @@ import org.neiacademy.robotics.frc2026.subsystems.vision.VisionConstants;
 import org.neiacademy.robotics.frc2026.subsystems.vision.VisionIO;
 import org.neiacademy.robotics.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.neiacademy.robotics.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
+import org.neiacademy.robotics.frc2026.subsystems.vision.VisionIOTusk;
 import org.neiacademy.robotics.frc2026.util.AllianceFlipUtil;
 import org.neiacademy.robotics.frc2026.util.AutoMirroringUtil;
 import org.neiacademy.robotics.frc2026.util.ControllerAlertRumble;
+import strix.tusk.TuskSource;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -122,8 +124,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+                VisionConstants.useTusk
+                    ? new VisionIOTusk(new TuskSource(), drive::samplePoseAt, drive::getPose)
+                    : new VisionIOPhotonVision(
+                        VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
         spindexer = new Spindexer(new SpindexerIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
@@ -160,11 +164,17 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
+        // With useTusk, vision comes from whatever publishes /Vision/observations to the sim's NT
+        // server (a real Owl or a fake one), same code path as the real robot.
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose));
+                VisionConstants.useTusk
+                    ? new VisionIOTusk(new TuskSource(), drive::samplePoseAt, drive::getPose)
+                    : new VisionIOPhotonVisionSim(
+                        VisionConstants.camera0Name,
+                        VisionConstants.robotToCamera0,
+                        drive::getPose));
 
         spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});

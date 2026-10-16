@@ -36,7 +36,9 @@ public interface VisionIO {
   public static enum PoseObservationType {
     MEGATAG_1,
     MEGATAG_2,
-    PHOTONVISION
+    PHOTONVISION,
+    /** Strix: Owl on the coprocessor, read on the robot through Tusk. */
+    TUSK
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}

@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -329,6 +330,16 @@ public class Drive extends SubsystemBase {
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
+  /**
+   * Returns the estimated pose at a past timestamp, from the pose estimator's history buffer. Used
+   * by vision to pick and gate poses at image capture time.
+   *
+   * @param timestampSeconds FPGA timestamp in seconds
+   */
+  public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
+    return poseEstimator.sampleAt(timestampSeconds);
   }
 
   /** Adds a new timestamped vision measurement. */
